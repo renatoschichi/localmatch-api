@@ -1,19 +1,27 @@
-import { Controller, Post, Body, Request, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UnauthorizedException } from '@nestjs/common';
+import { ApiTags, ApiCreatedResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { LocalAuthGuard } from './local-auth.guard';
+import { AuthRegisterDto } from './auth-register.dto';
+import { AuthLoginDto } from './auth-login.dto';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  async register(@Body() body) {
-    return this.authService.register(body);
+  @ApiCreatedResponse({ description: 'Usuário registrado com sucesso' })
+  register(@Body() authRegisterDto: AuthRegisterDto) {
+    return this.authService.register(authRegisterDto);
   }
 
-  @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.user);
+  @ApiCreatedResponse({ description: 'Usuário autenticado com sucesso' })
+  async login(@Body() authLoginDto: AuthLoginDto) {
+    const user = await this.authService.validateUser(authLoginDto.email, authLoginDto.password);
+    if (!user) {
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
+    return this.authService.login(user);
   }
 }

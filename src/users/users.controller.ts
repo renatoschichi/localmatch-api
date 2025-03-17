@@ -1,11 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Body, Patch, Param, Delete, UseGuards, Req, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiCreatedResponse } from '@nestjs/swagger';
+import { CreateUserDto } from './create-user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  @ApiCreatedResponse({ type: User })
+  create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.usersService.create(createUserDto);
+  }
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
