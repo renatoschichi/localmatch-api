@@ -6,7 +6,7 @@ export class AuthLoginDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: '123456', description: 'Senha do usuário para login' })
+  @ApiProperty({ example: '123', description: 'Senha do usuário para login' })
   @IsString()
   @IsNotEmpty()
   password: string;
