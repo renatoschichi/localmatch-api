@@ -1,25 +1,23 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiTags, ApiBearerAuth, ApiCreatedResponse, ApiBody } from '@nestjs/swagger';
+import { CreateEventDto } from './create-event.dto';
+import { UpdateEventDto } from './update-event.dto';
 
+@ApiTags('events')
+@ApiBearerAuth()
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() data: Partial<Event>): Promise<Event> {
-    return this.eventsService.create(data);
+  @ApiBody({ type: CreateEventDto })
+  @ApiCreatedResponse({ type: Event, description: 'Evento criado com sucesso' })
+  create(@Body() createEventDto: CreateEventDto): Promise<Event> {
+    return this.eventsService.create(createEventDto);
   }
 
   @Get()
@@ -34,8 +32,9 @@ export class EventsController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() data: Partial<Event>): Promise<Event> {
-    return this.eventsService.update(+id, data);
+  @ApiBody({ type: UpdateEventDto })
+  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto): Promise<Event> {
+    return this.eventsService.update(+id, updateEventDto);
   }
 
   @UseGuards(JwtAuthGuard)

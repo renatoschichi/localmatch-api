@@ -2,16 +2,22 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Event } from './event.entity';
+import { CreateEventDto } from './create-event.dto';
+import { UpdateEventDto } from './update-event.dto';
 
 @Injectable()
 export class EventsService {
   constructor(
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
-  ) {}
+  ) { }
 
-  async create(data: Partial<Event>): Promise<Event> {
-    const event = this.eventRepository.create(data);
+  async create(data: CreateEventDto): Promise<Event> {
+    const eventData: Partial<Event> = { ...data };
+    if (data.categoryId) {
+      eventData.category = { id: data.categoryId } as any;
+    }
+    const event = this.eventRepository.create(eventData);
     return this.eventRepository.save(event);
   }
 
@@ -30,9 +36,12 @@ export class EventsService {
     return event;
   }
 
-  async update(id: number, data: Partial<Event>): Promise<Event> {
+  async update(id: number, data: UpdateEventDto): Promise<Event> {
     const event = await this.findOne(id);
     Object.assign(event, data);
+    if (data.categoryId) {
+      event.category = { id: data.categoryId } as any;
+    }
     return this.eventRepository.save(event);
   }
 
