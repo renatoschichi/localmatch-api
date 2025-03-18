@@ -48,14 +48,6 @@ export class Event {
   @Column({ type: 'datetime', nullable: true })
   endDate: Date;
 
-  @ApiPropertyOptional({ example: 37.7749, description: 'Latitude do evento' })
-  @Column({ type: 'float', nullable: true })
-  latitude: number;
-
-  @ApiPropertyOptional({ example: -122.4194, description: 'Longitude do evento' })
-  @Column({ type: 'float', nullable: true })
-  longitude: number;
-
   @ApiPropertyOptional({ example: 'data:image/jpeg;base64,...', description: 'Imagem 1 do evento, em base64' })
   @Column({ type: 'text', nullable: true })
   image1: string;

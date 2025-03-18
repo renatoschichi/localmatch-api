@@ -50,16 +50,6 @@ export class CreateEventDto {
   @IsDateString()
   endDate: Date;
 
-  @ApiPropertyOptional({ example: 37.7749, description: 'Latitude do evento' })
-  @IsOptional()
-  @IsNumber()
-  latitude?: number;
-
-  @ApiPropertyOptional({ example: -122.4194, description: 'Longitude do evento' })
-  @IsOptional()
-  @IsNumber()
-  longitude?: number;
-
   @ApiPropertyOptional({ example: 1, description: 'ID da categoria do evento' })
   @IsOptional()
   @IsNumber()

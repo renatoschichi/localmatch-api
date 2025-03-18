@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Event } from './event.entity';
@@ -13,6 +13,12 @@ export class EventsService {
   ) { }
 
   async create(data: CreateEventDto): Promise<Event> {
+    const existingEvent = await this.eventRepository.findOne({
+      where: { title: data.title, startDate: data.startDate },
+    });
+    if (existingEvent) {
+      throw new ConflictException(`Evento com o título "${data.title}" e data de início "${data.startDate}" já existe.`);
+    }
     const eventData: Partial<Event> = { ...data };
     if (data.categoryId) {
       eventData.category = { id: data.categoryId } as any;
@@ -37,6 +43,16 @@ export class EventsService {
   }
 
   async update(id: number, data: UpdateEventDto): Promise<Event> {
+    if (data.title || data.startDate) {
+      const eventToUpdate = await this.eventRepository.findOne({
+        where: { title: data.title || undefined, startDate: data.startDate || undefined },
+      });
+      if (eventToUpdate && eventToUpdate.id !== id) {
+        throw new ConflictException(
+          `Já existe um evento com o título "${data.title}" e data de início "${data.startDate}".`
+        );
+      }
+    }
     const event = await this.findOne(id);
     Object.assign(event, data);
     if (data.categoryId) {
