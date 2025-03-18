@@ -65,11 +65,20 @@ export class CreateEventDto {
   @IsNumber()
   categoryId?: number;
 
-  @ApiPropertyOptional({ example: 'https://example.com/event.jpg', description: 'URL da imagem do evento' })
+  @ApiPropertyOptional({ example: 'data:image/jpeg;base64,...', description: 'Imagem 1 do evento, em base64' })
   @IsOptional()
   @IsString()
-  @IsUrl()
-  imageUrl?: string;
+  image1?: string;
+
+  @ApiPropertyOptional({ example: 'data:image/jpeg;base64,...', description: 'Imagem 2 do evento, em base64' })
+  @IsOptional()
+  @IsString()
+  image2?: string;
+
+  @ApiPropertyOptional({ example: 'data:image/jpeg;base64,...', description: 'Imagem 3 do evento, em base64' })
+  @IsOptional()
+  @IsString()
+  image3?: string;
 
   @ApiPropertyOptional({ example: 'Evento gratuito', description: 'Informações adicionais do evento' })
   @IsOptional()

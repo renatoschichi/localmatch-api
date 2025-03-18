@@ -56,9 +56,17 @@ export class Event {
   @Column({ type: 'float', nullable: true })
   longitude: number;
 
-  @ApiPropertyOptional({ example: 'https://example.com/event.jpg', description: 'URL da imagem do evento' })
-  @Column({ nullable: true })
-  imageUrl: string;
+  @ApiPropertyOptional({ example: 'data:image/jpeg;base64,...', description: 'Imagem 1 do evento, em base64' })
+  @Column({ type: 'text', nullable: true })
+  image1: string;
+
+  @ApiPropertyOptional({ example: 'data:image/jpeg;base64,...', description: 'Imagem 2 do evento, em base64' })
+  @Column({ type: 'text', nullable: true })
+  image2: string;
+
+  @ApiPropertyOptional({ example: 'data:image/jpeg;base64,...', description: 'Imagem 3 do evento, em base64' })
+  @Column({ type: 'text', nullable: true })
+  image3: string;
 
   @ApiPropertyOptional({ example: 'Evento gratuito', description: 'Informações adicionais do evento' })
   @Column({ nullable: true })
