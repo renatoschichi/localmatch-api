@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
 import { NotificationsService } from 'src/notifications/notification.service';
+import { UserRole } from 'src/users/user-role.enum';
 
 @Injectable()
 export class CategoriesService {
@@ -10,9 +11,9 @@ export class CategoriesService {
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
     private readonly notificationsService: NotificationsService
-  ) {}
+  ) { }
 
-  async create(data: Partial<Category>): Promise<Category> {
+  async create(data: Partial<Category>, actorRole?: string): Promise<Category> {
     const existing = await this.categoryRepository.findOne({ where: { name: data.name } });
     if (existing) {
       throw new ConflictException(`Categoria com o nome "${data.name}" já existe.`);
@@ -21,7 +22,8 @@ export class CategoriesService {
     const savedCategory = await this.categoryRepository.save(category);
 
     await this.notificationsService.createNotification(
-      `Categoria "${savedCategory.name}" criada com sucesso.`
+      `Categoria "${savedCategory.name}" criada com sucesso.`,
+      actorRole as UserRole
     );
     return savedCategory;
   }
@@ -41,7 +43,7 @@ export class CategoriesService {
     return category;
   }
 
-  async update(id: number, data: Partial<Category>): Promise<Category> {
+  async update(id: number, data: Partial<Category>, actorRole?: string): Promise<Category> {
     if (data.name) {
       const existing = await this.categoryRepository.findOne({ where: { name: data.name } });
       if (existing && existing.id !== id) {
@@ -53,12 +55,13 @@ export class CategoriesService {
     const updatedCategory = await this.categoryRepository.save(category);
 
     await this.notificationsService.createNotification(
-      `Categoria "${updatedCategory.name}" atualizada com sucesso.`
+      `Categoria "${updatedCategory.name}" atualizada com sucesso.`,
+      actorRole as UserRole
     );
     return updatedCategory;
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number, actorRole?: string): Promise<void> {
     const category = await this.findOne(id);
     if (category.events && category.events.length > 0) {
       throw new ConflictException(
@@ -68,7 +71,8 @@ export class CategoriesService {
     await this.categoryRepository.remove(category);
 
     await this.notificationsService.createNotification(
-      `Categoria "${category.name}" deletada com sucesso.`
+      `Categoria "${category.name}" deletada com sucesso.`,
+      actorRole as UserRole
     );
   }
 }

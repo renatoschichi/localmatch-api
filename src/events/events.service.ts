@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Event } from './event.entity';
+import { UserRole } from 'src/users/user-role.enum';
 import { NotificationsService } from 'src/notifications/notification.service';
 import { CreateEventDto } from './create-event.dto';
 import { UpdateEventDto } from './update-event.dto';
@@ -14,27 +15,32 @@ export class EventsService {
     private readonly notificationsService: NotificationsService
   ) {}
 
-  async create(data: CreateEventDto): Promise<Event> {
-    const existingEvent = await this.eventRepository.findOne({
-      where: { title: data.title, startDate: data.startDate },
-    });
-    if (existingEvent) {
-      throw new ConflictException(
-        `Evento com o título "${data.title}" e data de início "${data.startDate}" já existe.`
-      );
-    }
-
+  async create(data: CreateEventDto, actorRole: UserRole): Promise<Event> {
     const eventData: Partial<Event> = { ...data };
     if (data.categoryId) {
       eventData.category = { id: data.categoryId } as any;
     }
     const event = this.eventRepository.create(eventData);
     const savedEvent = await this.eventRepository.save(event);
-
     await this.notificationsService.createNotification(
-      `Evento "${savedEvent.title}" criado com sucesso.`
+      `Evento "${savedEvent.title}" criado com sucesso.`,
+      actorRole
     );
     return savedEvent;
+  }
+
+  async update(id: number, data: UpdateEventDto, actorRole: UserRole): Promise<Event> {
+    const event = await this.findOne(id);
+    Object.assign(event, data);
+    if (data.categoryId) {
+      event.category = { id: data.categoryId } as any;
+    }
+    const updatedEvent = await this.eventRepository.save(event);
+    await this.notificationsService.createNotification(
+      `Evento "${updatedEvent.title}" atualizado com sucesso.`,
+      actorRole
+    );
+    return updatedEvent;
   }
 
   async findAll(): Promise<Event[]> {
@@ -52,25 +58,12 @@ export class EventsService {
     return event;
   }
 
-  async update(id: number, data: UpdateEventDto): Promise<Event> {
-    const event = await this.findOne(id);
-    Object.assign(event, data);
-    if (data.categoryId) {
-      event.category = { id: data.categoryId } as any;
-    }
-    const updatedEvent = await this.eventRepository.save(event);
-
-    await this.notificationsService.createNotification(
-      `Evento "${updatedEvent.title}" atualizado com sucesso.`
-    );
-    return updatedEvent;
-  }
-
-  async remove(id: number): Promise<void> {
+  async remove(id: number, actorRole: UserRole): Promise<void> {
     const event = await this.findOne(id);
     await this.eventRepository.remove(event);
     await this.notificationsService.createNotification(
-      `Evento "${event.title}" deletado.`
+      `Evento "${event.title}" deletado.`,
+      actorRole
     );
   }
 }

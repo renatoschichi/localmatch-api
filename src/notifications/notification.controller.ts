@@ -1,9 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { Notification } from './notification.entity';
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
+import { AdminOrPartnerGuard } from 'src/auth/guards/admin-or-partner.guard';
 import { NotificationsService } from './notification.service';
 
 @ApiTags('notifications')
+@ApiBearerAuth()
+@UseGuards(AdminOrPartnerGuard)
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}

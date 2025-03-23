@@ -22,7 +22,10 @@ export class UsersService {
     return this.userRepository.save(newUser);
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(role?: string): Promise<User[]> {
+    if (role) {
+      return this.userRepository.find({ where: { role: role as UserRole } });
+    }
     return this.userRepository.find();
   }
 
