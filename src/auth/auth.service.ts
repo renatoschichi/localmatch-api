@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
+import { UserRole } from 'src/users/user-role.enum';
 import { AuthRegisterDto } from './auth-register.dto';
 
 @Injectable()
@@ -17,7 +18,7 @@ export class AuthService {
       throw new UnauthorizedException('Email já está em uso');
     }
 
-    const role = data.userType === 'partner' ? 'partner' : 'user';
+    const role = UserRole.ROLE_CONSUMER;
 
     const user = await this.usersService.create({
       email: data.email,
@@ -43,7 +44,6 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<User> {
     const user = await this.usersService.findByEmail(email);
-
     if (user && user.password === pass) {
       const { password, ...result } = user;
       return result as User;

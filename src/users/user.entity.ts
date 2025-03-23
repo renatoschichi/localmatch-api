@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { ApiProperty } from '@nestjs/swagger';
+import { UserRole } from './user-role.enum';
 
 @Entity('users')
 export class User {
@@ -11,15 +12,15 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @ApiProperty({ example: '123456', description: 'Senha do usuário' })
+  @ApiProperty({ example: '********', description: 'Senha do usuário' })
   @Column()
   password: string;
 
-  @ApiProperty({ example: 'user', description: 'Papel do usuário' })
-  @Column({ default: 'user' })
-  role: string;
-
-  @ApiProperty({ example: 'Usuario Teste', description: 'Nome do usuário' })
+  @ApiProperty({ example: 'Usuário Teste', description: 'Nome do usuário' })
   @Column({ nullable: true })
   name: string;
+
+  @ApiProperty({ example: UserRole.ROLE_CONSUMER, description: 'Role do usuário' })
+  @Column({ type: 'varchar', default: UserRole.ROLE_CONSUMER })
+  role: UserRole;
 }

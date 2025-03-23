@@ -27,13 +27,13 @@ export class CategoriesService {
   }
 
   async findAll(): Promise<Category[]> {
-    return this.categoryRepository.find();
+    return this.categoryRepository.find({ relations: ['events'] });
   }
 
   async findOne(id: number): Promise<Category> {
     const category = await this.categoryRepository.findOne({
       where: { id },
-      relations: ['events'],
+      relations: ['events']
     });
     if (!category) {
       throw new NotFoundException(`Categoria #${id} não encontrada`);
@@ -60,9 +60,15 @@ export class CategoriesService {
 
   async remove(id: number): Promise<void> {
     const category = await this.findOne(id);
+    if (category.events && category.events.length > 0) {
+      throw new ConflictException(
+        `Não é possível deletar a categoria "${category.name}" pois ela possui eventos cadastrados.`
+      );
+    }
     await this.categoryRepository.remove(category);
+
     await this.notificationsService.createNotification(
-      `Categoria "${category.name}" deletada.`
+      `Categoria "${category.name}" deletada com sucesso.`
     );
   }
 }

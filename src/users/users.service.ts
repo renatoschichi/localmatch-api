@@ -1,16 +1,23 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
+import { UserRole } from './user-role.enum';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
   async create(data: Partial<User>): Promise<User> {
+    if (data.role === UserRole.ROLE_ADMIN) {
+      const adminExists = await this.userRepository.findOne({ where: { role: UserRole.ROLE_ADMIN } });
+      if (adminExists) {
+        throw new ConflictException('Já existe um usuário admin. Apenas um usuário admin é permitido.');
+      }
+    }
     const newUser = this.userRepository.create(data);
     return this.userRepository.save(newUser);
   }
@@ -20,7 +27,7 @@ export class UsersService {
   }
 
   async findOne(id: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuário não encontrado');
     return user;
   }
@@ -31,6 +38,12 @@ export class UsersService {
 
   async update(id: number, data: Partial<User>): Promise<User> {
     const user = await this.findOne(id);
+    if (data.role === UserRole.ROLE_ADMIN && user.role !== UserRole.ROLE_ADMIN) {
+      const adminExists = await this.userRepository.findOne({ where: { role: UserRole.ROLE_ADMIN } });
+      if (adminExists) {
+        throw new ConflictException('Já existe um usuário admin. Apenas um usuário admin é permitido.');
+      }
+    }
     Object.assign(user, data);
     return this.userRepository.save(user);
   }
