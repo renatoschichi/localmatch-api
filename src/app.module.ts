@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { EventsModule } from './events/events.module';
 import { CategoriesModule } from './categories/categories.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { NotificationsModule } from './notifications/notifications.module';
     AuthModule,
     EventsModule,
     CategoriesModule,
-    NotificationsModule
+    NotificationsModule,
+    ChatModule
   ],
   controllers: [],
   providers: []
