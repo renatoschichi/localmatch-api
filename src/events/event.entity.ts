@@ -40,11 +40,9 @@ export class Event {
   @Column({ nullable: true })
   number: string;
 
-  @ApiProperty({ example: '2025-03-10T19:00:00.000Z', description: 'Data e hora de início do evento' })
   @Column({ type: 'datetime', nullable: true })
   startDate: Date;
 
-  @ApiProperty({ example: '2025-03-10T22:00:00.000Z', description: 'Data e hora de término do evento' })
   @Column({ type: 'datetime', nullable: true })
   endDate: Date;
 
@@ -71,11 +69,18 @@ export class Event {
   })
   category: Category;
 
-  @ApiProperty({ example: '2025-03-10T18:00:00.000Z', description: 'Data de criação do evento' })
-  @CreateDateColumn({ type: 'datetime' })
+  @ApiProperty({ example: '2025-03-10T18:00:00', description: 'Data de criação do evento' })
+  @CreateDateColumn({
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP'
+  })
   createdAt: Date;
 
-  @ApiProperty({ example: '2025-03-10T18:30:00.000Z', description: 'Data da última atualização do evento' })
-  @UpdateDateColumn({ type: 'datetime' })
+  @ApiProperty({ example: '2025-03-10T18:30:00', description: 'Data da última atualização do evento' })
+  @UpdateDateColumn({
+    type: 'datetime',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP'
+  })
   updatedAt: Date;
 }
