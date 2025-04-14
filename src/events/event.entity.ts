@@ -71,14 +71,16 @@ export class Event {
 
   @ApiProperty({ example: '2025-03-10T18:00:00', description: 'Data de criação do evento' })
   @CreateDateColumn({
-    type: 'datetime',
+    type: 'timestamp',
+    precision: 0,
     default: () => 'CURRENT_TIMESTAMP'
   })
   createdAt: Date;
 
   @ApiProperty({ example: '2025-03-10T18:30:00', description: 'Data da última atualização do evento' })
   @UpdateDateColumn({
-    type: 'datetime',
+    type: 'timestamp',
+    precision: 0,
     default: () => 'CURRENT_TIMESTAMP',
     onUpdate: 'CURRENT_TIMESTAMP'
   })

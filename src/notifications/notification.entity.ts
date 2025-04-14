@@ -16,6 +16,6 @@ export class Notification {
   read: boolean;
 
   @ApiProperty({ example: '2025-03-17T21:00:00.000Z', description: 'Data de criação da notificação' })
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 }

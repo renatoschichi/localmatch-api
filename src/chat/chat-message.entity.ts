@@ -20,6 +20,6 @@ export class ChatMessage {
   content: string;
 
   @ApiProperty({ example: '2025-03-25T12:00:00.000Z', description: 'Data de criação da mensagem' })
-  @CreateDateColumn({ type: 'datetime' })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 }
