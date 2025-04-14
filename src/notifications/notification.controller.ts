@@ -5,8 +5,6 @@ import { AdminOrPartnerGuard } from 'src/auth/guards/admin-or-partner.guard';
 import { NotificationsService } from './notification.service';
 
 @ApiTags('notifications')
-@ApiBearerAuth()
-@UseGuards(AdminOrPartnerGuard)
 @Controller('notifications')
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}

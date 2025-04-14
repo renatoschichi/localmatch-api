@@ -7,8 +7,6 @@ import { CreateCategoryDto } from './categories.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('categories')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard, AdminOrPartnerGuard)
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) { }

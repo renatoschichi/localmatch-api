@@ -7,6 +7,8 @@ import { AdminCreateUserDto } from './admin-create-user.dto';
 import { AdminUpdateUserDto } from './admin-update-user.dto';
 import { AdminOnlyGuard } from 'src/auth/guards/admin-only.guard';
 import { SelfOrAdminGuard } from 'src/auth/guards/self-or-admin.guard';
+import { AdminCreationGuard } from 'src/auth/guards/admin-creation.guard';
+import { CreateUserDto } from './create-user.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -15,33 +17,33 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 
   @Post()
-  @UseGuards(JwtAuthGuard, AdminOnlyGuard)
   @ApiBody({ type: AdminCreateUserDto })
   @ApiCreatedResponse({ type: User, description: 'Usuário criado com sucesso' })
   create(@Body() adminCreateUserDto: AdminCreateUserDto): Promise<User> {
     return this.usersService.create(adminCreateUserDto);
   }
 
+  @Post()
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
+  }
+
   @Get()
-  @UseGuards(JwtAuthGuard, AdminOnlyGuard)
   findAll(@Query('role') role?: string): Promise<User[]> {
     return this.usersService.findAll(role);
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard, AdminOnlyGuard)
   findOne(@Param('id') id: string): Promise<User> {
     return this.usersService.findOne(+id);
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, SelfOrAdminGuard)
   update(@Param('id') id: string, @Body() adminUpdateUserDto: AdminUpdateUserDto): Promise<User> {
     return this.usersService.update(+id, adminUpdateUserDto);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, SelfOrAdminGuard)
   remove(@Param('id') id: string): Promise<void> {
     return this.usersService.remove(+id);
   }

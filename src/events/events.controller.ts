@@ -10,8 +10,6 @@ import { UpdateEventDto } from './update-event.dto';
 import { UserRole } from 'src/users/user-role.enum';
 
 @ApiTags('events')
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard, AdminOrPartnerGuard)
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) { }

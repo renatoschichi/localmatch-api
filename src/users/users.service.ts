@@ -11,6 +11,11 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) { }
 
+  async adminExists(): Promise<boolean> {
+    const admin = await this.userRepository.findOne({ where: { role: UserRole.ROLE_ADMIN } });
+    return Boolean(admin);
+  }  
+
   async create(data: Partial<User>): Promise<User> {
     if (data.role === UserRole.ROLE_ADMIN) {
       const adminExists = await this.userRepository.findOne({ where: { role: UserRole.ROLE_ADMIN } });
