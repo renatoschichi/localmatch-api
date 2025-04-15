@@ -11,6 +11,7 @@ import { EmailModule } from './email/email.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { AuthController } from './auth/auth.controller';
     NotificationsModule,
     ChatModule,
     EmailModule,
+    CompaniesModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' }
