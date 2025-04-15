@@ -1,10 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { Request } from 'express';
 import { EventsService } from './events.service';
 import { Event } from './event.entity';
-import { AdminOrPartnerGuard } from 'src/auth/guards/admin-or-partner.guard';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { ApiTags, ApiBearerAuth, ApiCreatedResponse, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiCreatedResponse, ApiBody } from '@nestjs/swagger';
 import { CreateEventDto } from './create-event.dto';
 import { UpdateEventDto } from './update-event.dto';
 import { UserRole } from 'src/users/user-role.enum';
