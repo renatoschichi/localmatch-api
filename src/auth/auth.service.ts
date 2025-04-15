@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
-import { EmailService } from 'src/email/email.service';
 import { User } from 'src/users/user.entity';
 import { UserRole } from 'src/users/user-role.enum';
 import { AuthRegisterDto } from './auth-register.dto';
@@ -11,7 +10,6 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
-    private readonly emailService: EmailService
   ) {}
 
   async register(data: AuthRegisterDto): Promise<any> {
@@ -28,17 +26,6 @@ export class AuthService {
       name: data.name,
       role,
     });
-
-    const confirmationToken = this.jwtService.sign({ sub: user.id }, { expiresIn: '1h' });
-    const confirmationLink = `${process.env.FRONTEND_URL}/auth/confirm?token=${confirmationToken}`;
-
-    const emailHtml = `
-      <h1>Bem-vindo(a) ao nosso App!</h1>
-      <p>Para confirmar sua conta, clique no link abaixo:</p>
-      <a href="${confirmationLink}">Confirmar Conta</a>
-      <p>Se você não se cadastrou, por favor ignore este e-mail.</p>
-    `;
-    await this.emailService.sendEmailConfirmation(user.email, 'Confirmação de Conta', emailHtml);
 
     const payload = { email: user.email, sub: user.id, role: user.role };
     return {

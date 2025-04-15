@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Category } from 'src/categories/category.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Category } from 'src/categories/category.entity';
+import { Company } from 'src/companies/companies.entity';
 
 @Entity('events')
 export class Event {
@@ -63,26 +64,27 @@ export class Event {
   additionalInfo: string;
 
   @ApiProperty({ type: () => Category, description: 'Categoria do evento' })
-  @ManyToOne(() => Category, (category) => category.events, {
-    onDelete: 'SET NULL',
-    nullable: true,
-  })
+  @ManyToOne(() => Category, (category) => category.events, { onDelete: 'SET NULL', nullable: true })
   category: Category;
+
+  @ApiProperty({ type: () => Company, description: 'Empresa responsável pelo evento (opcional)' })
+  @ManyToOne(() => Company, company => company.events, { onDelete: 'SET NULL', nullable: true })
+  company: Company;
 
   @ApiProperty({ example: '2025-03-10T18:00:00', description: 'Data de criação do evento' })
   @CreateDateColumn({
     type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
     precision: 0,
-    default: () => 'CURRENT_TIMESTAMP'
   })
   createdAt: Date;
 
   @ApiProperty({ example: '2025-03-10T18:30:00', description: 'Data da última atualização do evento' })
   @UpdateDateColumn({
     type: 'timestamp',
-    precision: 0,
     default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP'
+    onUpdate: 'CURRENT_TIMESTAMP',
+    precision: 0,
   })
   updatedAt: Date;
 }
