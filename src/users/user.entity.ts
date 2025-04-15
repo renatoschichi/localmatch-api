@@ -23,11 +23,4 @@ export class User {
   @ApiProperty({ example: UserRole.ROLE_CONSUMER, description: 'Role do usuário' })
   @Column({ type: 'varchar', default: UserRole.ROLE_CONSUMER })
   role: UserRole;
-
-  @ApiProperty({ example: false, description: 'Indica se o e-mail foi confirmado' })
-  @Column({ default: false })
-  emailConfirmed: boolean;
-
-  @Column({ nullable: true })
-  confirmationCode: string;
 }

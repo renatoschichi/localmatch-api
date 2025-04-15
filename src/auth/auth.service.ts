@@ -18,7 +18,7 @@ export class AuthService {
       throw new UnauthorizedException('Email já está em uso');
     }
 
-    const role = UserRole.ROLE_CONSUMER;
+    const role = data.role || UserRole.ROLE_CONSUMER;
 
     const user = await this.usersService.create({
       email: data.email,
